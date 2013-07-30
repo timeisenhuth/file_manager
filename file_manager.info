@@ -1,0 +1,5 @@
+name = File manager
+description = Provides a content type to allow managing files as nodes. 
+core = 7.x
+package = File Manager
+dependencies[] = attachment_links

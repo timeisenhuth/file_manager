@@ -1,0 +1,86 @@
+<?php
+/**
+ * @file
+ * Manage files as nodes.
+ * @copyright Copyright(c) 2012 Previous Next Pty Ltd
+ * @license GPL v2 http://www.fsf.org/licensing/licenses/gpl.html
+ * @author Tim Eisenhuth tim dot eisenhuth at previousnext dot com dot au
+ */
+
+include_once 'views/file_manager_default.views.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function file_manager_menu() {
+  $items = array();
+  $items['file-manager/select'] = array(
+    'title' => 'File Manager',
+    'page callback' => 'file_manager_select',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Page callback.
+ */
+function file_manager_select() {
+  $view = views_get_view('file_manager');
+
+  if (!$view || !$view->access('page')) {
+    return;
+  }
+
+  print $view->preview('page');
+  drupal_exit();
+}
+
+/**
+ * Implements of hook_wysiwyg_plugin().
+ */
+function file_manager_wysiwyg_plugin($editor) {
+
+  // Attach our JS.
+  drupal_add_js(drupal_get_path('module', 'file_manager') . '/js/file_manager.js');
+
+  $plugin['filemanager'] = array(
+    'path' => drupal_get_path('module', 'file_manager') . '/editors/' . $editor,
+    'buttons' => array('filemanager' => t('File Manager')),
+    'load' => TRUE,
+  );
+
+  // TinyMCE needs to know the filename.
+  if ($editor == 'tinymce') {
+    $plugin['filemanager']['filename'] = 'editor_plugin.js';
+  }
+
+  return $plugin;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function file_manager_views_api($module, $api) {
+  if ($module == 'views' && $api == 'views_default') {
+    return array('version' => 2);
+  }
+}
+
+/**
+ * Implements hook_node_info().
+ */
+function file_manager_node_info() {
+  return array(
+    'file_manager_file' => array(
+      'type' => 'file_manager_file',
+      'name' => t('File manager file'),
+      'base' => 'node_content',
+      'description' => t("Manage files as nodes"),
+      'custom' => 1,
+      'modified' => 1,
+      'locked' => 1,
+    ),
+  );
+}

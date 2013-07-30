@@ -1,0 +1,126 @@
+<?php
+/**
+ * @file
+ * Install file for File Manager.
+ * @copyright Copyright(c) 2012 Previous Next Pty Ltd
+ * @license GPL v2 http://www.fsf.org/licensing/licenses/gpl.html
+ * @author Tim Eisenhuth tim dot eisenhuth at previousnext dot com dot au
+ */
+
+/**
+ * Implements hook_install().
+ */
+function file_manager_install() {
+  $t = get_t();
+
+  // Create the file manager vocabulary.
+  if (!taxonomy_vocabulary_machine_name_load('file_manager')) {
+    $vocabulary = new stdClass();
+    $vocabulary->name = 'File manager';
+    $vocabulary->machine_name = 'file_manager';
+    $vocabulary->module = 'taxonomy';
+    taxonomy_vocabulary_save($vocabulary);
+  }
+
+  $file_manager_file = array(
+    'type' => 'file_manager_file',
+    'name' => $t('File'),
+    'base' => 'node_content',
+    'description' => $t("Manage files as nodes"),
+    'custom' => 1,
+    'modified' => 1,
+    'locked' => 1,
+  );
+  $file_manager_file = node_type_set_defaults($file_manager_file);
+
+  $field_body_info = field_info_instance('node', 'field_body', 'file_manager_file');
+  if (!$file_info) {
+    node_add_body_field($file_manager_file);
+  }
+
+  // Create field base.
+  $field_file_manager_file = field_info_field('field_file_manager_field');
+  if (!$field_file_manager_file) {
+    $file_field_base = array(
+      'field_name' => 'field_file_manager_file',
+      'type' => 'file',
+      'indexes' => array('fid' => array('fid')),
+      'cardinality' => 1,
+      'settings' => array(),
+    );
+    $file_field = field_create_field($file_field_base);
+    variable_set('attachment_links_selection_file_manager_file', $file_field['id']);
+  }
+
+  $field_file_manager_file_instance = field_info_instance('node', 'field_file_manager_file', 'file_manager_file');
+  if (!$field_file_manager_file_instance) {
+    // Create field instance.
+    $file_field_instance = array(
+      'field_name' => 'field_file_manager_file',
+      'entity_type' => 'node',
+      'label' => 'File',
+      'bundle' => 'file_manager_file',
+      'widget' => array(
+        'type' => 'file_generic',
+        'weight' => 10,
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'file_default',
+          'weight' => 10,
+        ),
+      ),
+      'settings' => array(
+        'file_directory' => 'file_manager',
+        'file_extensions' => 'txt jpg gif png tiff pdf doc docx xls xlsx ptt ppt',
+      ),
+    );
+    field_create_instance($file_field_instance);
+  }
+
+  $field_file_manager_location = field_info_field('field_file_manager_location');
+  if (!$field_file_manager_folder) {
+    // Create "Location" field.
+    $folder_field_base = array(
+      'field_name' => 'field_file_manager_location',
+      'type' => 'taxonomy_term_reference',
+      'cardinality' => 1,
+      'settings' => array(
+        'allowed_values' => array(
+          array(
+            'vocabulary' => 'file_manager',
+            'parent' => 0,
+          ),
+        ),
+      ),
+    );
+    field_create_field($folder_field_base);
+  }
+
+  $field_file_manager_location_instance = field_info_instance('node', 'field_file_manager_location', 'file_manager_file');
+  if (!$field_file_manager_file_instance) {
+    // Create "Location" field instance.
+    $location_field_instance = array(
+      'field_name' => 'field_file_manager_location',
+      'entity_type' => 'node',
+      'label' => 'Location',
+      'bundle' => 'file_manager_file',
+      'widget' => array(
+        'type' => 'options_select',
+        'weight' => 20,
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'taxonomy_term_reference_link',
+          'weight' => 10,
+        ),
+        'teaser' => array(
+          'type' => 'taxonomy_term_reference_link',
+          'weight' => 10,
+        ),
+      ),
+    );
+    field_create_instance($location_field_instance);
+  }
+
+}
