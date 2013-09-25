@@ -17,7 +17,7 @@ function file_manager_menu() {
   $items['file-manager/select'] = array(
     'title' => 'File Manager',
     'page callback' => 'file_manager_select',
-    'access arguments' => array('access content'),
+    'access arguments' => array('use file manager'),
     'type' => MENU_CALLBACK,
   );
   return $items;
@@ -42,8 +42,13 @@ function file_manager_select() {
  */
 function file_manager_wysiwyg_plugin($editor) {
 
+  // Allow other modules to set the link's attributes.
+  $link_attributes = array();
+  drupal_alter('file_manager_link_attributes', $link_attributes);
+
   // Attach our JS.
   drupal_add_js(drupal_get_path('module', 'file_manager') . '/js/file_manager.js');
+  drupal_add_js(array('file_manager' => array('attributes' => $link_attributes)), 'setting');
 
   $plugin['filemanager'] = array(
     'path' => drupal_get_path('module', 'file_manager') . '/editors/' . $editor,
@@ -82,5 +87,17 @@ function file_manager_node_info() {
       'modified' => 1,
       'locked' => 1,
     ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function file_manager_permission() {
+  return array(
+    'use file manager' => array(
+      'title' => t('Use File Manager'),
+      'description' => t('Access file manager pages.')
+    )
   );
 }

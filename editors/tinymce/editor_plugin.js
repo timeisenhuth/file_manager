@@ -15,7 +15,7 @@ Drupal.filemanager = Drupal.filemanager || {};
         if (tinymce.activeEditor.selection.getContent({format: 'text'}) == '') {
           alert('Please select some text to link');
         } else {
-          $modal = $('<div />').attr('id', 'snsw-modal');
+          $modal = $('<div />').attr('id', 'fm-modal');
           $('body').append($modal);
 
           $modal.dialog({
@@ -62,7 +62,6 @@ Drupal.filemanager = Drupal.filemanager || {};
 
   // Load the dialog data
   Drupal.filemanager.data = function (url) {
-    //content = $('#snsw-modal-content');
     $.ajax({
       url : url,
       beforeSend : function() {
