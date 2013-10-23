@@ -24,6 +24,7 @@ Drupal.behaviors.filemanager = {
         tinymce.activeEditor.selection.setContent(tinymce.activeEditor.dom.createHTML('a', attributes, text));
 
         $('#fm-modal').dialog('close');
+        $('#fm-modal').remove();
 
         e.preventDefault();
       });
