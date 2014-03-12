@@ -97,7 +97,7 @@ function file_manager_permission() {
   return array(
     'use file manager' => array(
       'title' => t('Use File Manager'),
-      'description' => t('Access file manager pages.')
-    )
+      'description' => t('Access file manager pages.'),
+    ),
   );
 }
