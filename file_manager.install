@@ -34,7 +34,7 @@ function file_manager_install() {
   $file_manager_file = node_type_set_defaults($file_manager_file);
 
   $field_body_info = field_info_instance('node', 'field_body', 'file_manager_file');
-  if (!$file_info) {
+  if (!$field_body_info) {
     node_add_body_field($file_manager_file);
   }
 
@@ -79,7 +79,7 @@ function file_manager_install() {
   }
 
   $field_file_manager_location = field_info_field('field_file_manager_location');
-  if (!$field_file_manager_folder) {
+  if (!$field_file_manager_location) {
     // Create "Location" field.
     $folder_field_base = array(
       'field_name' => 'field_file_manager_location',
@@ -98,7 +98,7 @@ function file_manager_install() {
   }
 
   $field_file_manager_location_instance = field_info_instance('node', 'field_file_manager_location', 'file_manager_file');
-  if (!$field_file_manager_file_instance) {
+  if (!$field_file_manager_location_instance) {
     // Create "Location" field instance.
     $location_field_instance = array(
       'field_name' => 'field_file_manager_location',
